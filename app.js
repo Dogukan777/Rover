@@ -3,6 +3,18 @@ const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const app = express();
+const mysql = require("mysql2");
+
+let connection = mysql.createConnection({
+    host: "137.184.158.246",
+    user: "rover",
+    password: "Kalem1234.",
+    database: "rover",
+    port: '3306'
+    
+
+
+});
 
 app.use(bodyParser.json({ limit: '50mb' }));  // Base64 veri boyutunu artırdık
 
@@ -68,6 +80,24 @@ app.post('/', (req, res) => {
     } else {
         res.status(400).send('Mesaj veya fotoğraf bulunamadı!');
     }
+});
+
+app.get('/db', (req, res) => {
+    
+   connection.query("SELECT * FROM rover.user where userName='"+req.body.name+"' and userSurname='"+req.body.surname+"'" , function (err, result){
+    console.log(result);
+    if (err) {
+        return res.status(500).json({ error: err.message });
+    }
+    if (result.length > 0){
+        res.send("YES");
+    }else{
+        res.send("NO");
+    }
+   
+
+
+   });
 });
 
 const PORT = 3000;
